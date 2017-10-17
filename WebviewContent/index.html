@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <!-- You can't link to other local files from this file - the compiled app will not find them.
+       The "correct" thing to do is probably generate this file by 'compiling' a normal collection of HTML/CSS/JS
+       into a single file through some sort of automated build process. -->
+  <head>
+    <!-- You *can* include things like this though. -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <!-- Obviosly, if you include libraries directly from the internet, your app will have to be online to work correctly. -->
+    <!-- You could also paste an entire minified library into the script tag. -->
+  </head>
+  <body>
+    <!-- Not sure why I put this script in the body rather than the head. There MAY have been a good reason. -->
+    <script type="text/javascript">
+      // There are two options shown here for when the webview is able to start sending messages to RN.
+      // Until the RN bridge is set up, postMessage is actually a different function with a different signature
+      // (if you get errors about expecting 2 parameters, that's why.)
+      // when using this for real, probably also set some kind of flag to let the rest of the webview logic know that the connection has been established.
+
+      // sending message on load - method 1 (probably less reliable):
+      onload = function() {
+        setTimeout(function () {
+          postMessage('message: webview -> RN: onload + 200ms') // because onload gets triggered prematurely, before React Native has actually hooked up its custom postMessage function.
+        }, 200);
+      };
+
+      // handle messages sent from React Native to the webview.
+      // Just change the HTML contents to the message for this example.
+      window.document.addEventListener('message', function(e) {
+        document.write(e.data); // change the contents of the webpage to be the message
+
+        // sending message on load - method 2 (depends on setting this message type up on the RN side):
+        if(e.data === 'loaded') {
+          postMessage('message: webview -> RN: as triggered by custom RN-side onLoad logic')
+        }
+      });
+    </script>
+
+    Hello, World!      
+
+  </body>
+</html>
